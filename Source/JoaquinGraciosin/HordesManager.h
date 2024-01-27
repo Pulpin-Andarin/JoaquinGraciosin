@@ -52,7 +52,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FHorde> Hordes;
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnEnemyDieSignature OnEnemyDie;
 private:
 	int _currentHorde;

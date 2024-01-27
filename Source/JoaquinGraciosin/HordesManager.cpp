@@ -98,6 +98,7 @@ UClass* AHordesManager::GetClassFromBlueprintAsset(const FAssetData& Asset)
 UFUNCTION()
 void AHordesManager::EnemyDie() {
 	--_remainingEnemies;
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Remaining Enemies: " + _remainingEnemies);
 	if (_remainingEnemies <= 0) {
 		PrepareNextHorde();
 	}
