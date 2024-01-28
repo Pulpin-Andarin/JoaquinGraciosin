@@ -41,6 +41,7 @@ void AHordesManager::PrepareNextHorde() {
 	++_currentHorde;
 	if (_currentHorde == Hordes.Num()) {
 		//Final del Juego
+		return;
 	}
 	_remainingEnemies = Hordes[_currentHorde]._leftEnemies.NEnemies + Hordes[_currentHorde]._rightEnemies.NEnemies;
 	StartHorde();
