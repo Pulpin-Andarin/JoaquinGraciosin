@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "EnemyBase.h"
 #include "PhrasesDataAsset.generated.h"
 
 
@@ -48,6 +49,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FClownAnswers> ClownPhrases;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<AEnemyBase> Enemy;
 
 	FPhrases() {}
 };

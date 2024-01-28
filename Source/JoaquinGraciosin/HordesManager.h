@@ -34,6 +34,8 @@ struct FHorde {
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDieSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSetLastEnemies, TArray<TSubclassOf<AEnemyBase>> , Enemies);
+
 UCLASS()
 class JOAQUINGRACIOSIN_API AHordesManager : public AActor
 {
@@ -54,6 +56,9 @@ public:
 	TArray<FHorde> Hordes;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnEnemyDieSignature OnEnemyDie;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+		FSetLastEnemies SetLastEnemiesEvent;
 private:
 	int _currentHorde;
 	int _remainingEnemies;
