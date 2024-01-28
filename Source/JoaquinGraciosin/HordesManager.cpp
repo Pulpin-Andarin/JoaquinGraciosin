@@ -15,6 +15,7 @@ AHordesManager::AHordesManager()
 	PrimaryActorTick.bCanEverTick = true;
 	_currentHorde = 0;
 	_remainingEnemies = 0;
+	_finalHorde = false;
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +23,7 @@ void AHordesManager::BeginPlay()
 {
 	Super::BeginPlay();
 	OnEnemyDie.AddUniqueDynamic(this, &AHordesManager::EnemyDie);
+	SetLastEnemiesEvent.AddUniqueDynamic(this, &AHordesManager::PrepareFinalRoundEnemies);
 	StartHorde();
 }
 
@@ -40,8 +42,7 @@ void AHordesManager::StartHorde() {
 void AHordesManager::PrepareNextHorde() {
 	++_currentHorde;
 	if (_currentHorde == Hordes.Num()) {
-		//Final del Juego
-		return;
+		PrepareFinalRound();
 	}
 	_remainingEnemies = Hordes[_currentHorde]._leftEnemies.NEnemies + Hordes[_currentHorde]._rightEnemies.NEnemies;
 	StartHorde();
@@ -61,6 +62,9 @@ void AHordesManager::SpawnEnemies(FEnemiesToSpawn EnemiesToSpawn) {
 			UClass* EnemyControllerClass = enemy->AIControllerClass;
 			AAIController* EnemyController = GetWorld()->SpawnActor<AAIController>(EnemyControllerClass);
 			EnemyController->Possess(enemy);
+		}
+		else {
+			--_remainingEnemies;
 		}
 	}
 }
@@ -96,11 +100,48 @@ UClass* AHordesManager::GetClassFromBlueprintAsset(const FAssetData& Asset)
 	return nullptr;
 }
 
+void AHordesManager::PrepareFinalRound() {
+	if (EnemiesFinalRound.Num() > 0) {
+		_finalHorde = true;
+		_remainingEnemies = EnemiesFinalRound.Num();
+		SpawnFinalRoundEnemies();
+	}
+	else {
+		GameWin();
+	}
+}
+
+void AHordesManager::SpawnFinalRoundEnemies() {
+	for (int i = 0; i < EnemiesFinalRound.Num(); ++i) {
+		int spawnIdentifier = FMath::RandRange(0, FinalRoundSpawns.Num() - 1);
+		FTransform transform = FinalRoundSpawns[spawnIdentifier]->GetActorTransform();
+		AEnemyBase* enemy = TrySpawnEnemy(transform, EnemiesFinalRound[i]);
+		if (enemy) {
+			UClass* EnemyControllerClass = enemy->AIControllerClass;
+			AAIController* EnemyController = GetWorld()->SpawnActor<AAIController>(EnemyControllerClass);
+			EnemyController->Possess(enemy);
+		}
+		else {
+			--_remainingEnemies;
+		}
+	}
+}
+
+void AHordesManager::GameWin() {
+	//Open game win screen
+}
+
 UFUNCTION()
 void AHordesManager::EnemyDie() {
 	--_remainingEnemies;
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Remaining Enemies: " + _remainingEnemies);
 	if (_remainingEnemies <= 0) {
 		PrepareNextHorde();
+	}
+}
+
+UFUNCTION()
+void AHordesManager::PrepareFinalRoundEnemies(TArray<TSubclassOf<AEnemyBase>> Enemies) {
+	if (Enemies.Num() > 0) {
+		EnemiesFinalRound = Enemies;
 	}
 }
