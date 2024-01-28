@@ -34,6 +34,7 @@ struct FHorde {
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDieSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWin);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSetLastEnemies, TArray<TSubclassOf<AEnemyBase>> , Enemies);
 
 UCLASS()
@@ -59,7 +60,9 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnEnemyDieSignature OnEnemyDie;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-		FSetLastEnemies SetLastEnemiesEvent;
+	FSetLastEnemies SetLastEnemiesEvent;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnWin OnWin;
 private:
 	int _currentHorde;
 	int _remainingEnemies;

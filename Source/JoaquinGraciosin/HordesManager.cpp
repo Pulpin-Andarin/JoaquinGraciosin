@@ -128,14 +128,19 @@ void AHordesManager::SpawnFinalRoundEnemies() {
 }
 
 void AHordesManager::GameWin() {
-	//Open game win screen
+	OnWin.Broadcast();
 }
 
 UFUNCTION()
 void AHordesManager::EnemyDie() {
 	--_remainingEnemies;
 	if (_remainingEnemies <= 0) {
-		PrepareNextHorde();
+		if (!_finalHorde) {
+			PrepareNextHorde();
+		}
+		else {
+			GameWin();
+		}
 	}
 }
 
