@@ -35,6 +35,7 @@ struct FHorde {
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDieSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWin);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartSpawning);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSetLastEnemies, TArray<TSubclassOf<AEnemyBase>> , Enemies);
 
 UCLASS()
@@ -63,6 +64,8 @@ public:
 	FSetLastEnemies SetLastEnemiesEvent;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnWin OnWin;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FStartSpawning StartSpawningEvent;
 private:
 	int _currentHorde;
 	int _remainingEnemies;
@@ -81,4 +84,6 @@ private:
 	void EnemyDie();
 	UFUNCTION()
 	void PrepareFinalRoundEnemies(TArray<TSubclassOf<AEnemyBase>> Enemies);
+	UFUNCTION()
+	void StartSpawningEnemies();
 };

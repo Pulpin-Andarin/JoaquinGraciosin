@@ -17,6 +17,9 @@ AHordesManager::AHordesManager()
 	_remainingEnemies = 0;
 	_finalHorde = false;
 }
+void AHordesManager:: StartSpawningEnemies() {
+	StartHorde();
+}
 
 // Called when the game starts or when spawned
 void AHordesManager::BeginPlay()
@@ -24,7 +27,9 @@ void AHordesManager::BeginPlay()
 	Super::BeginPlay();
 	OnEnemyDie.AddUniqueDynamic(this, &AHordesManager::EnemyDie);
 	SetLastEnemiesEvent.AddUniqueDynamic(this, &AHordesManager::PrepareFinalRoundEnemies);
-	StartHorde();
+	StartSpawningEvent.AddUniqueDynamic(this, &AHordesManager::StartSpawningEnemies);
+
+	_remainingEnemies = Hordes[0]._leftEnemies.NEnemies + Hordes[0]._rightEnemies.NEnemies;
 }
 
 // Called every frame
@@ -41,8 +46,9 @@ void AHordesManager::StartHorde() {
 
 void AHordesManager::PrepareNextHorde() {
 	++_currentHorde;
-	if (_currentHorde == Hordes.Num()) {
+	if (_currentHorde >= Hordes.Num()) {
 		PrepareFinalRound();
+		return;
 	}
 	_remainingEnemies = Hordes[_currentHorde]._leftEnemies.NEnemies + Hordes[_currentHorde]._rightEnemies.NEnemies;
 	StartHorde();
@@ -82,8 +88,10 @@ AEnemyBase* AHordesManager::TrySpawnEnemy(FTransform spawnTransform, TSubclassOf
 		if (fResult)
 		{
 			FTransform definitiveSpawn = spawnTransform;
-			definitiveSpawn.SetLocation(Result.Location);
-			enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyClass, definitiveSpawn);
+			definitiveSpawn.SetLocation(FVector(Result.Location.X, Result.Location.Y, Result.Location.Z + 100));
+			FActorSpawnParameters parameters;
+			parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyClass, definitiveSpawn, parameters);
 		}
 		++i;
 	} while (!enemy && i <= 3);
