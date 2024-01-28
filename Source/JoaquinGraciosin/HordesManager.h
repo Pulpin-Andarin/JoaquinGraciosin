@@ -34,6 +34,7 @@ struct FHorde {
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDieSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWin);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSetLastEnemies, TArray<TSubclassOf<AEnemyBase>> , Enemies);
 
 UCLASS()
@@ -54,20 +55,30 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FHorde> Hordes;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<AActor*> FinalRoundSpawns;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnEnemyDieSignature OnEnemyDie;
-
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-		FSetLastEnemies SetLastEnemiesEvent;
+	FSetLastEnemies SetLastEnemiesEvent;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnWin OnWin;
 private:
 	int _currentHorde;
 	int _remainingEnemies;
+	TArray<TSubclassOf<AEnemyBase>> EnemiesFinalRound;
+	bool _finalHorde;
 
 	void StartHorde();
 	void PrepareNextHorde();
 	void SpawnEnemies(FEnemiesToSpawn EnemiesToSpawn);
 	AEnemyBase* TrySpawnEnemy(FTransform spawnTransform, TSubclassOf<AEnemyBase> enemyClass);
 	UClass* GetClassFromBlueprintAsset(const FAssetData& Asset);
+	void PrepareFinalRound();
+	void SpawnFinalRoundEnemies();
+	void GameWin();
 	UFUNCTION()
 	void EnemyDie();
+	UFUNCTION()
+	void PrepareFinalRoundEnemies(TArray<TSubclassOf<AEnemyBase>> Enemies);
 };
