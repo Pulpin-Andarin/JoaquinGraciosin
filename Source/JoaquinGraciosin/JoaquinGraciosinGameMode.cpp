@@ -7,7 +7,8 @@
 AJoaquinGraciosinGameMode::AJoaquinGraciosinGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/JoaquinGraciosin/Blueprints/Player/MyPlayerCharacter"));
+
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/JoaquinGraciosin/Blueprints/Player/BP_MyPlayerCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
